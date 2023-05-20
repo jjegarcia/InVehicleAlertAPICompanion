@@ -14,10 +14,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import com.example.invehiclealertapicompanion.R
+import com.example.invehiclealertapicompanion.presentation.MainViewModel
 import com.example.invehiclealertapicompanion.presentation.theme.InVehicleAlertAPICompanionTheme
 
 @Composable
-fun WearApp(greetingName: String) {
+fun WearApp(viewModel: MainViewModel) {
     InVehicleAlertAPICompanionTheme {
         /* If you have enough items in your list, use [ScalingLazyColumn] which is an optimized
          * version of LazyColumn for wear devices with some added features. For more information,
@@ -29,7 +30,7 @@ fun WearApp(greetingName: String) {
                 .background(MaterialTheme.colors.background),
             verticalArrangement = Arrangement.Center
         ) {
-            Greeting(greetingName = greetingName)
+            Greeting(greetingName = viewModel.greetingName)
         }
     }
 }
@@ -47,5 +48,5 @@ fun Greeting(greetingName: String) {
 @Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
 @Composable
 fun DefaultPreview() {
-    WearApp("Preview Android")
+    WearApp(MainViewModel())
 }
