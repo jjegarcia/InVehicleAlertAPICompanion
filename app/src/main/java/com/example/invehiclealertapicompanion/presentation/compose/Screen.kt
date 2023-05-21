@@ -6,11 +6,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import com.example.invehiclealertapicompanion.R
@@ -30,7 +33,14 @@ fun WearApp(viewModel: MainViewModel) {
                 .background(MaterialTheme.colors.background),
             verticalArrangement = Arrangement.Center
         ) {
+            val heartRateBpm = viewModel.heartRateBpm.collectAsState().value
+            val uiState = viewModel.uiState.collectAsState().value
+
+
             Greeting(greetingName = viewModel.greetingName)
+            Button(modifier = Modifier.align(Alignment.CenterHorizontally), onClick = {viewModel.start()}) {
+                Text(text = "Start")
+            }
         }
     }
 }
@@ -48,5 +58,5 @@ fun Greeting(greetingName: String) {
 @Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
 @Composable
 fun DefaultPreview() {
-    WearApp(MainViewModel())
+//    WearApp()
 }
