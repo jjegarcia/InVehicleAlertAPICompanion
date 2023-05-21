@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.health.services.client.data.DataTypeAvailability
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.invehiclealertapicompanion.R
 import com.example.invehiclealertapicompanion.presentation.health.HealthServicesManager
 import com.example.invehiclealertapicompanion.presentation.health.MeasureMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,11 +23,16 @@ class MainViewModel @Inject constructor(
         TODO("Not yet implemented")
     }
 
+    private val _iconRes = MutableStateFlow(
+        R.drawable.ic_broken_heart
+    )
+    val iconRes: StateFlow<Int> = _iconRes
+
     val greetingName: String
         get() = "User"
 
-    private val _uiState = MutableStateFlow<UiState>(UiState.Startup)
-    val uiState: StateFlow<UiState> = _uiState
+    private val _uiStateDes = MutableStateFlow(UiState.Startup.des)
+    val uiStateDes: StateFlow<String> = _uiStateDes
 
     private val _heartRateAvailable = MutableStateFlow(DataTypeAvailability.UNKNOWN)
     val heartRateAvailable: StateFlow<DataTypeAvailability> = _heartRateAvailable
@@ -38,10 +44,10 @@ class MainViewModel @Inject constructor(
         // Check that the device has the heart rate capability and progress to the next state
         // accordingly.
         viewModelScope.launch {
-            _uiState.value = if (healthServicesManager.hasHeartRateCapability()) {
-                UiState.HeartRateAvailable
+            _uiStateDes.value = if (healthServicesManager.hasHeartRateCapability()) {
+                UiState.HeartRateAvailable.des
             } else {
-                UiState.HeartRateNotAvailable
+                UiState.HeartRateNotAvailable.des
             }
         }
     }
@@ -66,7 +72,20 @@ class MainViewModel @Inject constructor(
 }
 
 sealed class UiState {
-    object Startup : UiState()
-    object HeartRateAvailable : UiState()
-    object HeartRateNotAvailable : UiState()
+    abstract val des: String
+
+    object Startup : UiState() {
+        override val des: String
+            get() = "Started"
+    }
+
+    object HeartRateAvailable : UiState() {
+        override val des: String
+            get() = "Available"
+    }
+
+    object HeartRateNotAvailable : UiState() {
+        override val des: String
+            get() = "Unavailable"
+    }
 }
