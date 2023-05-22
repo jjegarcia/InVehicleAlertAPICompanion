@@ -3,6 +3,8 @@ package com.example.invehiclealertapicompanion.presentation
 import android.content.Context
 import androidx.health.services.client.HealthServices
 import androidx.health.services.client.HealthServicesClient
+import com.example.invehiclealertapicompanion.presentation.database.DatabaseHandler
+import com.example.invehiclealertapicompanion.presentation.database.DatabaseHandlerI
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,4 +22,8 @@ class MainModule {
     @Provides
     fun provideHealthServicesClient(@ApplicationContext context: Context): HealthServicesClient =
         HealthServices.getClient(context)
+
+    @Singleton
+    @Provides
+    fun provideDatabaseHandler(): DatabaseHandlerI = DatabaseHandler()
 }
