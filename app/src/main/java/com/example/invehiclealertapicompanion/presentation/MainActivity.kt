@@ -6,64 +6,52 @@
 
 package com.example.invehiclealertapicompanion.presentation
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.Text
-import com.example.invehiclealertapicompanion.R
-import com.example.invehiclealertapicompanion.presentation.theme.InVehicleAlertAPICompanionTheme
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
+import com.example.invehiclealertapicompanion.presentation.compose.WearApp
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val viewModel: MainViewModel by viewModels()
+    private lateinit var permissionLauncher: ActivityResultLauncher<String>
+
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            WearApp("Android")
+            WearApp(viewModel)
         }
+        permissionLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
+                when (result) {
+                    true -> {
+                        Log.i(TAG, "Body sensors permission granted")
+                        // Only measure while the activity is at least in STARTED state.
+                        // MeasureClient provides frequent updates, which requires increasing the
+                        // sampling rate of device sensors, so we must be careful not to remain
+                        // registered any longer than necessary.
+                        lifecycleScope.launchWhenStarted {
+                            viewModel.measureHeartRate()
+                        }
+                    }
+                    false -> Log.i(TAG, "Body sensors permission not granted")
+                }
+            }
+
     }
-}
-
-@Composable
-fun WearApp(greetingName: String) {
-    InVehicleAlertAPICompanionTheme {
-        /* If you have enough items in your list, use [ScalingLazyColumn] which is an optimized
-         * version of LazyColumn for wear devices with some added features. For more information,
-         * see d.android.com/wear/compose.
-         */
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background),
-            verticalArrangement = Arrangement.Center
-        ) {
-            Greeting(greetingName = greetingName)
-        }
+    override fun onStart() {
+        super.onStart()
+        permissionLauncher.launch(android.Manifest.permission.BODY_SENSORS)
     }
+
 }
 
-@Composable
-fun Greeting(greetingName: String) {
-    Text(
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center,
-        color = MaterialTheme.colors.primary,
-        text = stringResource(R.string.hello_world, greetingName)
-    )
-}
-
-@Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
-@Composable
-fun DefaultPreview() {
-    WearApp("Preview Android")
-}
