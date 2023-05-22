@@ -42,7 +42,7 @@ fun WearApp(viewModel: MainViewModel) {
             val uiStateDes = viewModel.uiStateDes.collectAsState().value
             val iconRes = viewModel.iconRes.collectAsState().value
 
-            Greeting(greetingName = viewModel.greetingName)
+            Greeting(userName = viewModel.greetingName)
             Button(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 onClick = { viewModel.start() }) {
@@ -81,12 +81,12 @@ fun Pulse(iconRes: Int, heartRateBpm: Double) {
 }
 
 @Composable
-fun Greeting(greetingName: String) {
+fun Greeting(userName: String) {
     Text(
         modifier = Modifier.fillMaxWidth(),
         textAlign = TextAlign.Center,
         color = MaterialTheme.colors.primary,
-        text = stringResource(R.string.hello_world, greetingName)
+        text = stringResource(R.string.hello_world, userName)
     )
 }
 
