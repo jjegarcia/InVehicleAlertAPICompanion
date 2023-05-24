@@ -62,6 +62,8 @@ class MainViewModel @Inject constructor(
                     Log.d(TAG, "Data update: $bpm")
                     _heartRateBpm.value = bpm
                     _iconRes.value = R.drawable.ic_heart
+                    databaseHandlerI.updateHealthData(bpm)
+
                 }
             }
         }
