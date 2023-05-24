@@ -35,8 +35,14 @@ class DatabaseHandler() : DatabaseHandlerI {
     override fun getValueEventListener(): ValueEventListener = valueEventListener
 
     override fun writeData() {
-        healthRef.push().setValue(HealthData(TARGET_TOKEN))
+        if (!isTokenInList())
+            healthRef.push().setValue(HealthData(TARGET_TOKEN))
     }
+
+    private fun isTokenInList(): Boolean {
+        if (deviceList == null) return false
+        return deviceList?.map { entry -> entry.value.token }?.contains(token) ?: false
+        }
 
     override fun updateHealthData(data: Double) {
         val key = findKey(token)
