@@ -42,7 +42,7 @@ class DatabaseHandler() : DatabaseHandlerI {
     private fun isTokenInList(): Boolean {
         if (deviceList == null) return false
         return deviceList?.map { entry -> entry.value.token }?.contains(token) ?: false
-        }
+    }
 
     override fun updateHealthData(data: Double) {
         val key = findKey(token)
