@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.invehiclealertapicompanion.R
+import com.example.invehiclealertapicompanion.presentation.database.DatabaseHandlerI
 import com.example.invehiclealertapicompanion.presentation.health.HealthServicesManager
 import com.example.invehiclealertapicompanion.presentation.health.MeasureMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val healthServicesManager: HealthServicesManager
+    private val healthServicesManager: HealthServicesManager,
+    private val databaseHandlerI: DatabaseHandlerI
 ) : ViewModel() {
     val greetingName: String
         get() = "User"
@@ -42,7 +44,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun start() {
-        TODO("Not yet implemented")
+        databaseHandlerI.writeData()
     }
 
     @ExperimentalCoroutinesApi
@@ -60,6 +62,8 @@ class MainViewModel @Inject constructor(
                     Log.d(TAG, "Data update: $bpm")
                     _heartRateBpm.value = bpm
                     _iconRes.value = R.drawable.ic_heart
+                    databaseHandlerI.updateHealthData(bpm)
+
                 }
             }
         }
